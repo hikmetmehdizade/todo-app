@@ -1,12 +1,10 @@
-import Router from "./components/router/Router";
-import { RecoilRoot } from "recoil";
+import Router from './components/router/Router';
+import authUser from './store/user';
+
+authUser.getMe();
 
 function App() {
-  return (
-    <RecoilRoot>
-      <Router />
-    </RecoilRoot>
-  );
+  return <Router />;
 }
 
 export default App;

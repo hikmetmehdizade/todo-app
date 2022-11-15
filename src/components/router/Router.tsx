@@ -1,13 +1,13 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 
-const LogInPage = lazy(() => import("../../pages/auth/AuthPage"));
+const LogInPage = lazy(() => import('../../pages/auth/AuthPage'));
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: (
-      <Suspense fallback={"Loading..."}>
+      <Suspense fallback={'Loading...'}>
         <LogInPage />
       </Suspense>
     ),
