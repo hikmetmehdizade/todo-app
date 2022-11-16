@@ -2,6 +2,7 @@ import { Button, Input } from '../../../common';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import authUser from '../../../store/user';
 import { observer } from 'mobx-react-lite';
+import { useNavigate } from 'react-router';
 
 interface LogInValues {
   email: string;
@@ -9,6 +10,8 @@ interface LogInValues {
 }
 
 const SignInForm = observer(() => {
+  const navigator = useNavigate();
+
   const { register, handleSubmit } = useForm<LogInValues>({
     defaultValues: {
       email: '',
@@ -16,8 +19,9 @@ const SignInForm = observer(() => {
     },
   });
   const onSubmit: SubmitHandler<LogInValues> = (data) => {
-    console.log('data', data);
-    authUser.logIn(data.email, data.password);
+    authUser.logIn(data.email, data.password).then(() => {
+      navigator('/workspaces');
+    });
   };
   return (
     <div className="min-w-fit rounded-xl p-8 shadow-2xl">

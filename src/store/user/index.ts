@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import http from '../../api/http';
+import { RootStore } from '../root';
 
 interface AuthUserState {
   user: any;
@@ -7,8 +8,10 @@ interface AuthUserState {
 
 class AuthUser implements AuthUserState {
   user: any;
-  constructor() {
+  rootStore?: RootStore;
+  constructor(root?: RootStore) {
     makeAutoObservable(this);
+    this.rootStore = root;
   }
 
   async getMe() {
@@ -38,4 +41,5 @@ class AuthUser implements AuthUserState {
 
 const authUser = new AuthUser();
 
+export { AuthUser };
 export default authUser;
