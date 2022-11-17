@@ -20,7 +20,9 @@ const router = createBrowserRouter([
     path: '/workspaces',
     element: (
       <Suspense>
-        <WorkspacePage />
+        <AuthLayouts>
+          <WorkspacePage />
+        </AuthLayouts>
       </Suspense>
     ),
   },

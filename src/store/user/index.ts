@@ -1,40 +1,82 @@
-import { makeAutoObservable } from 'mobx';
-import http from '../../api/http';
-import { RootStore } from '../root';
+import {
+  action,
+  makeObservable,
+  observable,
+  override,
+  runInAction,
+} from 'mobx';
+import http from '../../http';
+import HTTPRequest from '../api';
+import { API_ROUTES } from '../../const';
 
 interface AuthUserState {
   user: any;
 }
 
-class AuthUser implements AuthUserState {
-  user: any;
-  rootStore?: RootStore;
-  constructor(root?: RootStore) {
-    makeAutoObservable(this);
-    this.rootStore = root;
+class AuthUser extends HTTPRequest implements AuthUserState {
+  user: any = undefined;
+  constructor() {
+    super();
+    makeObservable(this, {
+      user: observable,
+      getMe: action,
+      signUp: action,
+      logIn: action,
+      logOut: action,
+    });
+    this.getMe();
   }
 
   async getMe() {
-    try {
-      const data = await http.get('/me');
-      const { user } = data.data;
-      this.user = user;
-    } catch (error) {
-      console.log(error);
+    const res = await this.request({
+      url: API_ROUTES.me.url(),
+      method: API_ROUTES.me.method,
+    });
+    runInAction(() => {
+      this.user = res?.data.user;
+    });
+  }
+
+  async signUp(userInfo: any) {
+    const res = await this.request({
+      url: API_ROUTES.signUp.url(),
+      method: API_ROUTES.signUp.method,
+      data: {
+        ...userInfo,
+      },
+    });
+
+    if (res?.data) {
+      const { user } = res.data;
+      runInAction(() => {
+        this.user = user;
+      });
     }
   }
 
-  async signIn(email: string, password: string) {
-    const data = await http.post('/auth/local/sign-in/', { email });
+  async logIn(email: string, password: string) {
+    const res = await this.request({
+      url: API_ROUTES.logIn.url(),
+      method: API_ROUTES.logIn.method,
+      data: {
+        email,
+        password,
+      },
+    });
+    runInAction(() => {
+      this.user = res?.data.user;
+    });
   }
 
-  async logIn(email: string, password: string) {
-    try {
-      const res = await http.post('/auth/local/sign-in/', { email, password });
-      const { user } = res.data;
-      this.user = user;
-    } catch (err) {
-      console.log('errr', err);
+  async logOut() {
+    const res = await this.request({
+      url: API_ROUTES.logOut.url(),
+      method: API_ROUTES.logOut.method,
+    });
+    if (res?.data) {
+      runInAction(() => {
+        this.user = undefined;
+      });
     }
   }
 }

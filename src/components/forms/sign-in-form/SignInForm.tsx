@@ -9,7 +9,7 @@ interface LogInValues {
   password: string;
 }
 
-const SignInForm = observer(() => {
+const SignInForm = () => {
   const navigator = useNavigate();
 
   const { register, handleSubmit } = useForm<LogInValues>({
@@ -40,6 +40,6 @@ const SignInForm = observer(() => {
       <p>Еще нет аккаунта? Регистрация</p>
     </div>
   );
-});
+};
 
-export default SignInForm;
+export default observer(SignInForm);

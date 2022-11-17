@@ -5,12 +5,12 @@ interface WorkspaceItemCard {
   workspace: Workspace;
 }
 
-const WorkspaceItemCard = observer(({ workspace }: WorkspaceItemCard) => {
+const WorkspaceItemCard = ({ workspace }: WorkspaceItemCard) => {
   return (
     <div>
       <h5>{workspace.workspace.name}</h5>
     </div>
   );
-});
+};
 
-export default WorkspaceItemCard;
+export default observer(WorkspaceItemCard);

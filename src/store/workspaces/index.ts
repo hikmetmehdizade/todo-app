@@ -1,5 +1,13 @@
-import { makeAutoObservable } from 'mobx';
-import http from '../../api/http';
+import {
+  action,
+  makeAutoObservable,
+  makeObservable,
+  observable,
+  runInAction,
+} from 'mobx';
+import { API_ROUTES } from '../../const';
+import http from '../../http';
+import HTTPRequest from '../api';
 
 class Workspace {
   workspace: any;
@@ -7,39 +15,61 @@ class Workspace {
     makeAutoObservable(this);
     this.workspace = workspace;
   }
+  getKey(prefix: string | undefined = 'workspace') {
+    return prefix + '-' + this.workspace.uuid;
+  }
+  async changeCurrentWorkspace() {
+    try {
+      const data = await http.post(`/user/workspace/${this.workspace.uuid}`);
+    } catch (err) {}
+  }
 }
 
-class Workspaces {
+class Workspaces extends HTTPRequest {
   workspaces: Workspace[] = [];
   currentWorkspaceId: string = '';
 
-  async createWorkspace(name: string) {
-    try {
-      const res = await http.post('/workspace', { name });
-      const { workspace } = res.data;
+  constructor() {
+    super();
+    makeObservable(this, {
+      workspaces: observable,
+      createWorkspace: action,
+      getAllWorkspaces: action,
+    });
+    this.getAllWorkspaces();
+  }
 
-      const ws = new Workspace(workspace);
-      this.workspaces.push(ws);
-    } catch (err) {
-      console.error(err);
+  async createWorkspace(name: string) {
+    const res = await this.request({
+      url: API_ROUTES.createWorkspace.url(),
+      method: API_ROUTES.createWorkspace.method,
+      data: {
+        name,
+      },
+    });
+    if (res?.data) {
+      runInAction(() => {
+        const { workspace } = res.data;
+        const ws = new Workspace(workspace);
+        this.workspaces.push(ws);
+      });
     }
   }
 
   async getAllWorkspaces() {
-    try {
-      const res = await http.get('workspaces');
+    const res = await this.request({
+      url: API_ROUTES.getAllWorkspace.url(),
+      method: API_ROUTES.getAllWorkspace.method,
+    });
 
+    if (res?.data) {
       const { workspaces } = res.data;
-
-      workspaces.forEach((item: any) => {
-        const w = new Workspace(item);
-        this.workspaces.push(w);
+      runInAction(() => {
+        const w = workspaces.map((item: any) => new Workspace(item));
+        this.workspaces = w;
       });
-    } catch (err) {
-      console.log('err', err);
     }
   }
-  async changeCurrentWorkspace() {}
 }
 
 const workspaces = new Workspaces();

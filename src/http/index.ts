@@ -24,13 +24,4 @@ http.interceptors.request.use(
   }
 );
 
-http.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    return error;
-  }
-);
-
 export default http;
