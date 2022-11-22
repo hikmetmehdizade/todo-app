@@ -8,7 +8,6 @@ const Button = forwardRef(
     <button
       ref={ref}
       {...props}
-      className="rounded-xl bg-sky-400 px-10 py-2 text-lg text-slate-50"
     >
       {children}
     </button>

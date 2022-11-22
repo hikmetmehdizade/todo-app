@@ -1,42 +1,46 @@
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useLayoutEffect } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { Button, Input } from '../../common';
+import React from 'react';
 import WorkspaceItemCard from '../../components/cards/workspace-item/WorkspaceItemCard';
 import workspaces from '../../store/workspaces';
+import { Space, Input, Button } from 'antd';
 
-interface CreateWorkspaceValue {
-  name: string;
+class WorkspacePage extends React.Component<{}, { value: string }> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      value: '',
+    };
+
+    this.handleChangeValue.bind(this);
+  }
+  componentDidMount(): void {}
+
+  createWorkspace() {
+    workspaces.createWorkspace(this.state.value);
+  }
+  handleChangeValue(value: string) {
+    this.setState((state) => ({ ...state, value }));
+  }
+
+  render(): React.ReactNode {
+    return (
+      <Space direction="vertical">
+        <Space>
+          <Input
+            value={this.state.value}
+            onChange={({ target }) => this.handleChangeValue(target.value)}
+          />
+          <Button onClick={this.createWorkspace} />
+        </Space>
+        <Space direction="vertical">
+          {workspaces.workspaces.map((item) => (
+            <WorkspaceItemCard key={item.getKey('list')} workspace={item} />
+          ))}
+        </Space>
+      </Space>
+    );
+  }
 }
 
-const WorkspacePage = () => {
-  useEffect(() => {
-    workspaces.getAllWorkspaces();
-  }, []);
-  const { register, handleSubmit, reset } = useForm({
-    defaultValues: {
-      name: '',
-    },
-  });
-
-  const onSubmit: SubmitHandler<CreateWorkspaceValue> = (data) => {
-    workspaces.createWorkspace(data.name);
-    reset();
-  };
-
-  return (
-    <div>
-      {workspaces.workspaces.map((item) => (
-        <WorkspaceItemCard key={item.getKey()} workspace={toJS(item)} />
-      ))}
-
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-        <Input {...register('name')} />
-        <Button>Create workspace</Button>
-      </form>
-    </div>
-  );
-};
-
-export default observer(WorkspacePage);
+export default WorkspacePage;

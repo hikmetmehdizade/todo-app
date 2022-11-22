@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { Workspace } from '../../../store/workspaces';
+import { Space, Typography } from 'antd';
 
 interface WorkspaceItemCard {
   workspace: Workspace;
@@ -7,9 +8,9 @@ interface WorkspaceItemCard {
 
 const WorkspaceItemCard = ({ workspace }: WorkspaceItemCard) => {
   return (
-    <div>
-      <h5>{workspace.workspace.name}</h5>
-    </div>
+    <Space direction="vertical">
+      <Typography.Paragraph>{workspace.workspace.name}</Typography.Paragraph>
+    </Space>
   );
 };
 

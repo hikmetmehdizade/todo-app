@@ -3,6 +3,7 @@ import { ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import http from '../../http';
 import authUser from '../../store/user';
+import { Layout } from 'antd';
 
 interface AuthLayoutsProps {
   children: ReactNode;
@@ -29,7 +30,16 @@ const AuthLayouts = ({ children }: AuthLayoutsProps) => {
     }
   }, [authUser.user]);
 
-  return <div>{children}</div>;
+  return (
+    <Layout>
+      <Layout.Header>header</Layout.Header>
+      <Layout>
+        <Layout.Sider theme="light">sider</Layout.Sider>
+        <Layout.Content>{children}</Layout.Content>
+      </Layout>
+      <Layout.Footer>Footer</Layout.Footer>
+    </Layout>
+  );
 };
 
 export default observer(AuthLayouts);

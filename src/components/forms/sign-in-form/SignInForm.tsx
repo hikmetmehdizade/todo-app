@@ -1,8 +1,8 @@
-import { Button, Input } from '../../../common';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import authUser from '../../../store/user';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router';
+import { Form, Input, Button } from 'antd';
 
 interface LogInValues {
   email: string;
@@ -18,25 +18,42 @@ const SignInForm = () => {
       password: '',
     },
   });
-  const onSubmit: SubmitHandler<LogInValues> = (data) => {
+  const onSubmit = (data: LogInValues) => {
+    console.log(data);
+    
     authUser.logIn(data.email, data.password).then(() => {
       navigator('/workspaces');
     });
   };
   return (
-    <div className="min-w-fit rounded-xl p-8 shadow-2xl">
-      <h5 className="text-2xl text-green-600">Вход в аккаунт</h5>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="my-4 flex flex-col items-center gap-3"
+    <div>
+      <Form
+        name="basic"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        initialValues={{ remember: true }}
+        onFinish={onSubmit}
       >
-        <Input {...register('email', { required: true })} />
-        <Input
-          type="password"
-          {...register('password', { required: true, minLength: 4 })}
-        />
-        <Button type="submit">Send</Button>
-      </form>
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[{ required: true, message: 'Please input your username!' }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[{ required: true, message: 'Please input your username!' }]}
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button type="primary" htmlType="submit" block>
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
       <p>Еще нет аккаунта? Регистрация</p>
     </div>
   );
